@@ -1,4 +1,4 @@
-# corona_cases
+# covi_tracker
 
 A new Flutter project.
 

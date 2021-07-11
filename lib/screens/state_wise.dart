@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class StateWiseData {
   String state;
   int active;
@@ -7,14 +9,15 @@ class StateWiseData {
   int todayConfirmed;
   int todayRecovered;
   int todayDeaths;
-  StateWiseData({
-    this.active,
-    this.confirmed,
-    this.deaths,
-    this.recovered,
-    this.state,
-    this.todayConfirmed,
-    this.todayDeaths,
-    this.todayRecovered,
-  });
+  Map<String, dynamic> districtData;
+  StateWiseData(
+      {this.active,
+      this.confirmed,
+      this.deaths,
+      this.recovered,
+      this.state,
+      this.todayConfirmed,
+      this.todayDeaths,
+      this.todayRecovered,
+      this.districtData});
 }

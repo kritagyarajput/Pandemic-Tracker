@@ -1,4 +1,4 @@
-import 'package:corona_cases/screens/main_screen.dart';
+import 'package:covi_tracker/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -13,7 +13,7 @@ class Starting extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "Corona Cases Tracker",
+      title: "Pandemic Tracker",
       home: MainScreen(),
       theme: ThemeData(
           backgroundColor: Color(0xFF1D1E33), primaryColor: Color(0xFF111328)),

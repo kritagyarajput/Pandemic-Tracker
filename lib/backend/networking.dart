@@ -4,7 +4,7 @@ import 'dart:convert';
 class Networking {
   Future getData() async {
     http.Response response = await http.get(
-        'https://corona.lmao.ninja/v2/countries/india?yesterday=true&strict=true&query');
+        'https://corona-api.com/countries/IN');
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {

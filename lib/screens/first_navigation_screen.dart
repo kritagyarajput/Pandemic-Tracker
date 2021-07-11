@@ -1,9 +1,10 @@
-import 'package:corona_cases/backend/constants.dart';
-import 'package:corona_cases/backend/networking.dart';
+import 'package:covi_tracker/backend/constants.dart';
+import 'package:covi_tracker/backend/networking.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FirstNavigationScreen extends StatefulWidget {
   @override
@@ -35,15 +36,15 @@ class _FirstNavigationScreenState extends State<FirstNavigationScreen> {
   void getData() async {
     Networking networking = Networking();
     var gotData = await networking.getData();
-    int todaysCasesData = gotData['todayCases'];
-    int tC = gotData['cases'];
-    int tD = gotData['deaths'];
-    int tR = gotData['recovered'];
-    int a = gotData['active'];
-    int ac = gotData['todayCases'];
-    int tchanges = gotData['todayCases'];
-    int dc = gotData['todayDeaths'];
-    int rc = gotData['todayRecovered'];
+    int todaysCasesData = gotData['data']['timeline'][0]['new_confirmed'];
+    int tC = gotData['data']['timeline'][0]['confirmed'];
+    int tD = gotData['data']['timeline'][0]['deaths'];
+    int tR = gotData['data']['timeline'][0]['recovered'];
+    int a = gotData['data']['timeline'][0]['active'];
+    int ac = gotData['data']['timeline'][0]['new_confirmed'];
+    int tchanges = gotData['data']['timeline'][0]['new_confirmed'];
+    int dc = gotData['data']['timeline'][0]['new_deaths'];
+    int rc = gotData['data']['timeline'][0]['new_recovered'];
     setState(() {
       todaysCases = todaysCasesData.toString();
       totalCases = tC.toString();
@@ -65,6 +66,15 @@ class _FirstNavigationScreenState extends State<FirstNavigationScreen> {
       pieRecovered = double.parse(pieRecovered.toStringAsFixed(2));
       pieDeaths = double.parse(pieDeaths.toStringAsFixed(2));
     });
+  }
+
+  _launchURL() async {
+    const url = 'https://selfregistration.cowin.gov.in/';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
@@ -237,48 +247,102 @@ class _FirstNavigationScreenState extends State<FirstNavigationScreen> {
                     ),
                   ),
                 ),
-                StaggeredGridView(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  gridDelegate:
-                      SliverStaggeredGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    staggeredTileBuilder: (int index) =>
-                        new StaggeredTile.count(2, index.isEven ? 3 : 2),
-                    mainAxisSpacing: 8.0,
-                    crossAxisSpacing: 2.0,
-                  ),
+                ReusableCard(
+                  cases: todaysCases,
+                  message: 'Today\'s Cases',
+                ),
+                ReusableCard(
+                  cases: recoveredChanges.toString(),
+                  message: 'Today\'s Recoveries',
+                ),
+                ReusableCard(
+                  cases: deathChanges.toString(),
+                  message: 'Today\'s Deaths',
+                ),
+                ReusableCard(
+                  cases: active,
+                  message: 'Active Cases',
+                ),
+                ReusableCard(
+                  cases: totalCases,
+                  message: 'Total Cases',
+                ),
+                ReusableCard(
+                  cases: totalDeaths,
+                  message: 'Total Deaths',
+                ),
+                ReusableCard(
+                  cases: totalRecovered,
+                  message: 'Total Recovered',
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ReusableCard(
-                      cases: todaysCases,
-                      message: 'TODAY CASES',
+                    Text(
+                      'Have you got vaccinated yet?',
+                      style: TextStyle(color: Colors.white),
                     ),
-                    ReusableCard(
-                      cases: recoveredChanges.toString(),
-                      message: 'TODAY RECOVERED',
+                    SizedBox(
+                      width: 10,
                     ),
-                    ReusableCard(
-                      cases: deathChanges.toString(),
-                      message: 'TODAY DEATHS',
-                    ),
-                    ReusableCard(
-                      cases: active,
-                      message: 'ACTIVE CASES',
-                    ),
-                    ReusableCard(
-                      cases: totalCases,
-                      message: 'TOTAL CASES',
-                    ),
-                    ReusableCard(
-                      cases: totalDeaths,
-                      message: 'DEATHS',
-                    ),
-                    ReusableCard(
-                      cases: totalRecovered,
-                      message: 'RECOVERED',
+                    MaterialButton(
+                      color: Color(0xFF1D1E33),
+                      onPressed: _launchURL,
+                      child: Text(
+                        'Get Vaccinated',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ],
-                )
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                // Container(
+                //   height: MediaQuery.of(context).size.height * 1.5,
+                //   child: StaggeredGridView(
+                //     scrollDirection: Axis.vertical,
+                //     shrinkWrap: true,
+                //     gridDelegate:
+                //         SliverStaggeredGridDelegateWithFixedCrossAxisCount(
+                //       crossAxisCount: 2,
+                //       staggeredTileBuilder: (int index) =>
+                //           new StaggeredTile.count(1, index.isEven ? 3 : 2),
+                //       // mainAxisSpacing: 8.0,
+                //       // crossAxisSpacing: 2.0,
+                //     ),
+                //     children: [
+                //       ReusableCard(
+                //         cases: todaysCases,
+                //         message: 'TODAY CASES',
+                //       ),
+                //       ReusableCard(
+                //         cases: recoveredChanges.toString(),
+                //         message: 'TODAY RECOVERED',
+                //       ),
+                //       ReusableCard(
+                //         cases: deathChanges.toString(),
+                //         message: 'TODAY DEATHS',
+                //       ),
+                //       ReusableCard(
+                //         cases: active,
+                //         message: 'ACTIVE CASES',
+                //       ),
+                //       ReusableCard(
+                //         cases: totalCases,
+                //         message: 'TOTAL CASES',
+                //       ),
+                //       ReusableCard(
+                //         cases: totalDeaths,
+                //         message: 'DEATHS',
+                //       ),
+                //       ReusableCard(
+                //         cases: totalRecovered,
+                //         message: 'RECOVERED',
+                //       ),
+                //     ],
+                //   ),
+                // )
               ],
             )),
       );
@@ -291,6 +355,8 @@ class ReusableCard extends StatelessWidget {
   final String cases;
   final String message;
   final int change;
+  final RegExp reg = new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+  final Function mathFunc = (Match match) => '${match[1]},';
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -309,9 +375,12 @@ class ReusableCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  message,
-                  style: kMainTextStyle,
+                FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Text(
+                    message,
+                    style: kMainTextStyle,
+                  ),
                 ),
                 Divider(
                   indent: 50.0,
@@ -321,7 +390,7 @@ class ReusableCard extends StatelessWidget {
                   color: Color(0xFFEB1555),
                 ),
                 Text(
-                  cases,
+                  cases.replaceAllMapped(reg, mathFunc),
                   style: kMainNumberTextStyle,
                 )
               ],

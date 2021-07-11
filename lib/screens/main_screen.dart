@@ -1,5 +1,5 @@
-import 'package:corona_cases/screens/first_navigation_screen.dart';
-import 'package:corona_cases/screens/second_navigation_screen.dart';
+import 'package:covi_tracker/screens/first_navigation_screen.dart';
+import 'package:covi_tracker/screens/second_navigation_screen.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -31,7 +31,7 @@ class _MainScreenState extends State<MainScreen> {
         title: FittedBox(
           fit: BoxFit.fitWidth,
           child: Text(
-            'Pandemic Tracker For 🇮🇳',
+            'Covid Tracker For 🇮🇳',
             style: TextStyle(
               fontSize: 28.0,
             ),

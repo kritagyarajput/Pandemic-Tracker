@@ -1,6 +1,6 @@
-import 'package:corona_cases/backend/networking.dart';
-import 'package:corona_cases/screens/state_wise.dart';
-import 'package:corona_cases/screens/detail_page.dart';
+import 'package:covi_tracker/backend/networking.dart';
+import 'package:covi_tracker/screens/state_wise.dart';
+import 'package:covi_tracker/screens/detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -17,18 +17,23 @@ class _SecondNavigationScreenState extends State<SecondNavigationScreen> {
     var data = gotData['state_wise'];
     data.forEach((key, element) {
       StateWiseData swd = StateWiseData(
-          active: int.parse(element['active']),
-          confirmed: int.parse(element['confirmed']),
-          deaths: int.parse(element['deaths']),
-          recovered: int.parse(element['recovered']),
-          state: element['state'],
-          todayConfirmed: int.parse(element['deltaconfirmed']),
-          todayDeaths: int.parse(element['deltadeaths']),
-          todayRecovered: int.parse(element['deltarecovered']));
+        active: int.parse(element['active']),
+        confirmed: int.parse(element['confirmed']),
+        deaths: int.parse(element['deaths']),
+        recovered: int.parse(element['recovered']),
+        state: element['state'],
+        todayConfirmed: int.parse(element['deltaconfirmed']),
+        todayDeaths: int.parse(element['deltadeaths']),
+        todayRecovered: int.parse(element['deltarecovered']),
+        districtData: data[key]['district'],
+      );
       stateWiseData.add(swd);
     });
     return stateWiseData;
   }
+
+  final RegExp reg = new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+  final Function mathFunc = (Match match) => '${match[1]},';
 
   List states = [];
   @override
@@ -56,42 +61,45 @@ class _SecondNavigationScreenState extends State<SecondNavigationScreen> {
                       ),
                       color: Color(0xFF1D1E33),
                     ),
-                    child: ListTile(
-                      subtitle: RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            color: Colors.white54,
-                          ),
-                          children: [
-                            TextSpan(text: 'Active: '),
-                            TextSpan(
-                              text: '${snapshot.data[index].active}',
-                              style: TextStyle(color: Color(0xFFEB1555)),
+                    child: (snapshot.data[index].state != 'State Unassigned')
+                        ? ListTile(
+                            subtitle: RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  color: Colors.white54,
+                                ),
+                                children: [
+                                  TextSpan(text: 'Active: '),
+                                  TextSpan(
+                                    text: '${snapshot.data[index].active}'
+                                        .replaceAllMapped(reg, mathFunc),
+                                    style: TextStyle(color: Color(0xFFEB1555)),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                      ),
-                      title: Center(
-                        child: Text(
-                          snapshot.data[index].state,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 25.0,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) {
-                            return DetailPage(snapshot.data[index]);
-                          }),
-                        );
-                      },
-                    ),
+                            title: Center(
+                              child: Text(
+                                snapshot.data[index].state,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 25.0,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) {
+                                  return DetailPage(snapshot.data[index]);
+                                }),
+                              );
+                            },
+                          )
+                        : Container(),
                   ),
                 );
               },
